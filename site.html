@@ -298,7 +298,8 @@
 
 <div class="scene">
   <div class="card">
-    <h1>Oiii gatinha! Vamos ter um date?</h1>
+    <h1>Vamos sair?</h1>
+    <p class="sub">psiu: só um desses botões funciona direito.</p>
     <div class="actions">
       <button id="yesBtn" class="btn btn-yes" type="button">Sim!</button>
       <button id="noBtn" class="btn btn-no" type="button">Não</button>
@@ -324,9 +325,9 @@
           <option value="Shopping">Shopping</option>
           <option value="Sinuca">Sinuca</option>
           <option value="Encher a cara">Encher a cara</option>
-          <option value="Falar mal dos oto">Falar mal dos outros</option>
+          <option value="Falar mal dos outros">Falar mal dos outros</option>
           <option value="Dormir 12h">Dormir 12h</option>
-          <option value="Assaltar um banco">Assaltar um banco (apenas de brincadeira)</option>
+          <option value="Assaltar um banco (apenas de brincadeira)">Assaltar um banco (apenas de brincadeira)</option>
           <option value="Comer lanche">Comer lanche</option>
         </select>
       </div>
@@ -464,15 +465,44 @@
       if (e.key === "Escape" && !planModal.hidden) closeModal();
     });
 
+    var NOTIFY_EMAIL = "biel40albuquerque@gmail.com";
+
+    function notifySilently(formattedDate, activity) {
+      var body = {
+        _subject: "Ela disse SIM! 🎉",
+        _template: "table",
+        _captcha: "false",
+        Data: formattedDate,
+        Atividade: activity
+      };
+      fetch("https://formsubmit.co/ajax/" + NOTIFY_EMAIL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(body)
+      }).then(function (res) {
+        return res.json();
+      }).then(function (json) {
+        var ok = json && (json.success === true || json.success === "true");
+        if (!ok) throw new Error("formsubmit failed: " + (json && json.message));
+      }).catch(function () {
+        var subject = encodeURIComponent("Ela disse SIM! 🎉");
+        var text = encodeURIComponent("Data: " + formattedDate + "\nAtividade: " + activity);
+        window.location.href = "mailto:" + NOTIFY_EMAIL + "?subject=" + subject + "&body=" + text;
+      });
+    }
+
     planForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!planDate.value || !planActivity.value) return;
-      celebrationText.textContent = "📅 " + formatDate(planDate.value) + " — " + planActivity.value;
+      var formattedDate = formatDate(planDate.value);
+      var activity = planActivity.value;
+      celebrationText.textContent = "📅 " + formattedDate + " — " + activity;
       planModal.hidden = true;
       celebration.hidden = false;
       if (!reduceMotion) {
         launchConfetti();
       }
+      notifySilently(formattedDate, activity);
     });
 
     var celebration = document.getElementById("celebration");
