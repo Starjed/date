@@ -32,8 +32,617 @@
     min-height: 100vh;
     min-height: 100dvh;
     background-color: #fdf8f5;
-    background-image: url('https://chatgpt.com/backend-api/estuary/content?id=file_000000005108820e9593aff35bcfe000&ts=496405&p=fs&cid=1&sig=cfbcdbb9d07f36de0dc7e63b8e7bd0eaf7e96cf4c5008714651d43f72bc7cb96&v=0');
+    background-image: url("background.png");
+    background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-position: center center;
+    font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    position: relative;
   }
+
+  .scene {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 28px;
+    padding: 44px 32px 40px;
+    text-align: center;
+    box-shadow: 0 24px 60px -20px var(--shadow-tint), 0 2px 0 rgba(255, 255, 255, 0.8) inset;
+    backdrop-filter: blur(6px);
+    animation: settle 0.6s cubic-bezier(.2, .9, .3, 1.2);
+  }
+
+  @keyframes settle {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card h1 {
+    margin: 0 0 10px;
+    font-size: clamp(1.9rem, 6vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .card p.sub {
+    margin: 0 0 30px;
+    font-size: 0.98rem;
+    color: var(--muted);
+    text-wrap: balance;
+    line-height: 1.5;
+  }
+
+  .actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 14px 28px;
+    font-size: 1.05rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  .btn-yes {
+    background: var(--accent-yes);
+    color: var(--accent-yes-text);
+    border: 3px solid #fff;
+    box-shadow: 0 10px 24px -10px var(--accent-yes-dark);
+  }
+
+  .btn-yes:hover {
+    background: var(--accent-yes-dark);
+  }
+
+  .btn-no {
+    background: var(--no-bg);
+    color: var(--no-text);
+    border: 3px solid #fff;
+    box-shadow: 0 10px 24px -10px rgba(43, 35, 51, 0.35);
+    z-index: 5;
+  }
+
+  .btn-no.escaped {
+    position: fixed;
+    z-index: 50;
+  }
+
+  .btn-no:hover {
+    background: var(--no-bg-hover);
+  }
+
+  .btn-ghost {
+    background: rgba(43, 35, 51, 0.06);
+    color: var(--ink);
+    border: 2px solid rgba(43, 35, 51, 0.14);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(43, 35, 51, 0.12);
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 14, 30, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+
+  .modal-overlay[hidden] { display: none; }
+
+  .modal-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 28px;
+    padding: 36px 30px 30px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 60px -20px var(--shadow-tint);
+    backdrop-filter: blur(6px);
+    animation: settle 0.4s cubic-bezier(.2, .9, .3, 1.2);
+  }
+
+  .modal-card h2 {
+    margin: 0 0 6px;
+    font-size: clamp(1.5rem, 5vw, 1.9rem);
+    font-weight: 800;
+    text-wrap: balance;
+  }
+
+  .modal-sub {
+    margin: 0 0 26px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  #planForm {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+  }
+
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field select,
+  .field input[type="date"] {
+    font: inherit;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 2px solid rgba(43, 35, 51, 0.16);
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .field select:focus-visible,
+  .field input[type="date"]:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-color: var(--focus-ring);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 6px;
+  }
+
+  .modal-actions .btn {
+    flex: 1;
+    padding: 12px 18px;
+    font-size: 0.98rem;
+  }
+
+  .chopper-wish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(43, 35, 51, 0.12);
+    animation: settle 0.4s cubic-bezier(.2, .9, .3, 1.2);
+  }
+
+  .chopper-wish[hidden] { display: none; }
+
+  .chopper-wish img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .chopper-wish p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--ink);
+    line-height: 1.35;
+    font-weight: 600;
+  }
+
+  .celebration {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .celebration[hidden] { display: none; }
+
+  #confetti {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .celebration-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 28px;
+    padding: 40px 34px;
+    text-align: center;
+    max-width: 380px;
+    width: calc(100% - 48px);
+    box-shadow: 0 24px 60px -20px var(--shadow-tint);
+    backdrop-filter: blur(6px);
+    animation: settle 0.5s cubic-bezier(.2, .9, .3, 1.2) both;
+  }
+
+  .celebration-card h2 {
+    margin: 0 0 10px;
+    font-size: clamp(1.7rem, 6vw, 2.1rem);
+    font-weight: 800;
+    text-wrap: balance;
+  }
+
+  .celebration-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .celebration-close {
+    appearance: none;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(43, 35, 51, 0.08);
+    color: var(--ink);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+
+  .celebration-close:hover {
+    background: rgba(43, 35, 51, 0.16);
+  }
+
+  .celebration-close:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+</style>
+
+<div class="scene">
+  <div class="card">
+    <h1>Oiii gatinha, vamos ter um date?</h1>
+    <div class="actions">
+      <button id="yesBtn" class="btn btn-yes" type="button">Sim!</button>
+      <button id="noBtn" class="btn btn-no" type="button">Não</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="planModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Vamooosss!!</h2>
+    <p class="modal-sub">Escolhe o melhor dia pra você, estou sempre a sua diposição.</p>
+    <form id="planForm">
+      <div class="field">
+        <label for="planDate">Data</label>
+        <input type="date" id="planDate" name="planDate" required>
+      </div>
+      <div class="field">
+        <label for="planActivity">O que vamos fazer</label>
+        <select id="planActivity" name="planActivity" required>
+          <option value="" disabled selected>Escolha uma opção</option>
+          <option value="Sushi">Sushi</option>
+          <option value="Assistir filme">Assistir filme</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Sinuca">Sinuca</option>
+          <option value="Encher a cara">Encher a cara</option>
+          <option value="Falar mal dos outros">Falar mal dos outros</option>
+          <option value="Dormir 12h">Dormir 12h</option>
+          <option value="Assaltar um banco (apenas de brincadeira)">Assaltar um banco</option>
+          <option value="Comer lanche">Comer lanche</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="cancelBtn" class="btn btn-ghost">Cancelar</button>
+        <button type="submit" class="btn btn-yes">Confirmar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="celebration" id="celebration" hidden>
+  <canvas id="confetti"></canvas>
+  <div class="celebration-card">
+    <button type="button" id="celebrationClose" class="celebration-close" aria-label="Fechar">&times;</button>
+    <h2>Obaaaaaaaa! 🎉</h2>
+    <p id="celebrationText">Agora é só aparecer.</p>
+    <div class="chopper-wish" id="chopperWish">
+      <img src="Tony_Tony_Chopper_Anime_Pre_Timeskip_Infobox.webp" alt="Tony Tony Chopper">
+      <p>Chopper deseja muitas melhoras pra você! Descansa bastante e fica boa logo 💙🩺</p>
+      <img src="chopper cogumelo.jpg" alt="Chopper cogumelo">
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    "use strict";
+
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var noBtn = document.getElementById("noBtn");
+    var yesBtn = document.getElementById("yesBtn");
+    var card = document.querySelector(".card");
+
+    function viewportSize() {
+      return {
+        w: document.documentElement.clientWidth,
+        h: document.documentElement.clientHeight
+      };
+    }
+
+    function rectsOverlap(a, b, margin) {
+      return !(
+        a.right + margin < b.left ||
+        a.left - margin > b.right ||
+        a.bottom + margin < b.top ||
+        a.top - margin > b.bottom
+      );
+    }
+
+    function dodge() {
+      var btnRect = noBtn.getBoundingClientRect();
+      var w = btnRect.width || 90;
+      var h = btnRect.height || 48;
+      var pad = 12;
+      var viewport = viewportSize();
+      var maxX = Math.max(pad, viewport.w - w - pad);
+      var maxY = Math.max(pad, viewport.h - h - pad);
+      var cardRect = card.getBoundingClientRect();
+
+      if (!noBtn.classList.contains("escaped")) {
+        document.body.appendChild(noBtn);
+        noBtn.classList.add("escaped");
+        noBtn.style.left = btnRect.left + "px";
+        noBtn.style.top = btnRect.top + "px";
+      }
+
+      var target = null;
+      for (var i = 0; i < 12; i++) {
+        var x = pad + Math.random() * (maxX - pad);
+        var y = pad + Math.random() * (maxY - pad);
+        var candidate = { left: x, top: y, right: x + w, bottom: y + h };
+        if (!rectsOverlap(candidate, cardRect, 16)) {
+          target = candidate;
+          break;
+        }
+        target = candidate;
+      }
+
+      noBtn.style.left = target.left + "px";
+      noBtn.style.top = target.top + "px";
+    }
+
+    noBtn.addEventListener("pointerenter", function (e) {
+      if (e.pointerType === "mouse") dodge();
+    });
+    noBtn.addEventListener("pointerdown", function () {
+      dodge();
+    });
+
+    window.addEventListener("resize", function () {
+      if (!noBtn.classList.contains("escaped")) return;
+      var w = noBtn.offsetWidth;
+      var h = noBtn.offsetHeight;
+      var viewport = viewportSize();
+      var maxX = Math.max(12, viewport.w - w - 12);
+      var maxY = Math.max(12, viewport.h - h - 12);
+      var curLeft = parseFloat(noBtn.style.left) || 0;
+      var curTop = parseFloat(noBtn.style.top) || 0;
+      noBtn.style.left = Math.min(curLeft, maxX) + "px";
+      noBtn.style.top = Math.min(curTop, maxY) + "px";
+    });
+
+    var planModal = document.getElementById("planModal");
+    var planForm = document.getElementById("planForm");
+    var planDate = document.getElementById("planDate");
+    var planActivity = document.getElementById("planActivity");
+    var cancelBtn = document.getElementById("cancelBtn");
+    var celebrationText = document.getElementById("celebrationText");
+
+    function pad2(n) {
+      return n < 10 ? "0" + n : "" + n;
+    }
+
+    var today = new Date();
+    planDate.min = today.getFullYear() + "-" + pad2(today.getMonth() + 1) + "-" + pad2(today.getDate());
+
+    function formatDate(iso) {
+      var parts = iso.split("-");
+      return parts[2] + "/" + parts[1] + "/" + parts[0];
+    }
+
+    function openModal() {
+      planModal.hidden = false;
+      planDate.focus();
+    }
+
+    function closeModal() {
+      planModal.hidden = true;
+      yesBtn.focus();
+    }
+
+    cancelBtn.addEventListener("click", closeModal);
+
+    planModal.addEventListener("click", function (e) {
+      if (e.target === planModal) closeModal();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !planModal.hidden) closeModal();
+    });
+
+    var NOTIFY_EMAIL = "biel40albuquerque@gmail.com";
+
+    function notifySilently(formattedDate, activity) {
+      var body = {
+        _subject: "Ela disse SIM! 🎉",
+        _template: "table",
+        _captcha: "false",
+        Data: formattedDate,
+        Atividade: activity
+      };
+      fetch("https://formsubmit.co/ajax/" + NOTIFY_EMAIL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(body)
+      }).then(function (res) {
+        return res.json();
+      }).then(function (json) {
+        var ok = json && (json.success === true || json.success === "true");
+        if (!ok) throw new Error("formsubmit failed: " + (json && json.message));
+      }).catch(function (err) {
+        console.warn("notifySilently failed:", err);
+      });
+    }
+
+    planForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!planDate.value || !planActivity.value) return;
+      var formattedDate = formatDate(planDate.value);
+      var activity = planActivity.value;
+      celebrationText.textContent = "📅 " + formattedDate + " — " + activity;
+      planModal.hidden = true;
+      celebration.hidden = false;
+      if (!reduceMotion) {
+        launchConfetti();
+      }
+      notifySilently(formattedDate, activity);
+    });
+
+    var celebration = document.getElementById("celebration");
+    var celebrationClose = document.getElementById("celebrationClose");
+    var canvas = document.getElementById("confetti");
+    var ctx = canvas.getContext("2d");
+    var confettiRunning = false;
+
+    function closeCelebration() {
+      celebration.hidden = true;
+      confettiRunning = false;
+    }
+
+    celebrationClose.addEventListener("click", closeCelebration);
+
+    celebration.addEventListener("click", function (e) {
+      if (e.target === celebration) closeCelebration();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !celebration.hidden) closeCelebration();
+    });
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    var palette = ["#ff6f91", "#ffb26b", "#ffd166", "#8fe3c8", "#c8b6f0"];
+
+    function launchConfetti() {
+      resizeCanvas();
+      var pieces = [];
+      var count = 140;
+      for (var i = 0; i < count; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: -20 - Math.random() * canvas.height * 0.5,
+          w: 6 + Math.random() * 6,
+          h: 8 + Math.random() * 10,
+          color: palette[Math.floor(Math.random() * palette.length)],
+          speedY: 2 + Math.random() * 3,
+          speedX: (Math.random() - 0.5) * 2,
+          rot: Math.random() * Math.PI,
+          rotSpeed: (Math.random() - 0.5) * 0.2
+        });
+      }
+
+      var start = null;
+      var duration = 3200;
+      confettiRunning = true;
+
+      function frame(ts) {
+        if (start === null) start = ts;
+        var elapsed = ts - start;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(function (p) {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.rot += p.rotSpeed;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (elapsed < duration && confettiRunning) {
+          requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          confettiRunning = false;
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    yesBtn.addEventListener("click", openModal);
+  })();
+</script>
